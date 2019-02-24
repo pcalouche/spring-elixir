@@ -7,9 +7,9 @@
         <artifactId>spring-boot-project-pom</artifactId>
         <version>1.4</version>
     </parent>
-    <artifactId>springelixir</artifactId>
-    <version>1.0.0</version>
-    <name>springelixir</name>
+    <artifactId>spring-elixir</artifactId>
+    <version>1.0.1</version>
+    <name>spring-elixir</name>
     <description>Spring Boot Auto-configuration library</description>
 
     <repositories>
