@@ -1,5 +1,7 @@
 package com.pcalouche.springelixir.swagger;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.pcalouche.springelixir.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
+import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -18,6 +21,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @ConditionalOnClass(EnableSwagger2.class)
@@ -29,11 +34,15 @@ public class SwaggerAutoConfiguration {
 
     @Bean
     public Docket docket(SwaggerProperties swaggerProperties) {
+        List<Predicate<RequestHandler>> requestHandlers = swaggerProperties.getBasePackages().stream()
+                .map(RequestHandlerSelectors::basePackage)
+                .collect(Collectors.toList());
+
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .enable(swaggerProperties.isEnabled())
                 .apiInfo(apiInfo(swaggerProperties))
                 .select()
-                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
+                .apis(Predicates.or(requestHandlers))
                 .build()
                 .enableUrlTemplating(true);
         // Add any additional ignored parameters that would have come from the client config

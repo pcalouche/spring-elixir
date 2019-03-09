@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,7 +23,7 @@ public class SwaggerProperties {
      * The base package to  scan for Swagger API document generation.
      */
     @NotEmpty
-    private String basePackage = "NOT SET";
+    private List<String> basePackages = new ArrayList<>();
     /**
      * Title of Swagger API documentation (e.g. MI AMAR API)
      */
