@@ -70,8 +70,8 @@ public class SwaggerAutoConfiguration {
                 .description(swaggerProperties.getDescription())
                 .version(version)
                 .contact(new Contact(
-                        "Tax Management Associates",
-                        "https://www.tma1.com/",
+                        "Philip Calouche",
+                        "https://github.com/pcalouche",
                         ""))
                 .build();
     }
