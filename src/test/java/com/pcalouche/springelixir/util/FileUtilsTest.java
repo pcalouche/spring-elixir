@@ -10,7 +10,7 @@ public class FileUtilsTest {
 
     @Test
     public void readClassPathResource() throws IOException {
-        String expectedVersion = "1.1.0";
+        String expectedVersion = "1.2.0";
         assertThat(FileUtils.readClassPathResource("artifact-version.txt")).isEqualTo(expectedVersion);
     }
 
