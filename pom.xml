@@ -5,10 +5,10 @@
     <parent>
         <groupId>com.github.pcalouche</groupId>
         <artifactId>spring-boot-project-pom</artifactId>
-        <version>1.5</version>
+        <version>1.6</version>
     </parent>
     <artifactId>spring-elixir</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <name>spring-elixir</name>
     <description>Spring Boot Auto-configuration library</description>
 
