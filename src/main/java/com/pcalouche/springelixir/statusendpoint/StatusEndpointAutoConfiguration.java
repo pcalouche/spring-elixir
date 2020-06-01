@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnWebApplication
-@ConditionalOnProperty(prefix = "statusendpoint", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "status-endpoint", name = "enabled", matchIfMissing = true)
 @EnableConfigurationProperties(StatusEndpointProperties.class)
 public class StatusEndpointAutoConfiguration {
 

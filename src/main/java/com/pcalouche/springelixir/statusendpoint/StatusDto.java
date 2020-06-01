@@ -6,6 +6,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class StatusDto {
-    private final String application;
+    private final String appName;
     private final String version;
 }

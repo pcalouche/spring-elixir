@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "controlleradvice")
 public class ControllerAdviceProperties {
-
     /**
      * Enables standard controller advice or not
      */

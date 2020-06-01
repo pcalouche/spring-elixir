@@ -10,9 +10,8 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @Validated
-@ConfigurationProperties(prefix = "statusendpoint")
+@ConfigurationProperties(prefix = "status-endpoint")
 public class StatusEndpointProperties {
-
     /**
      * Enables status endpoint or not
      */
@@ -22,4 +21,9 @@ public class StatusEndpointProperties {
      */
     @NotEmpty
     private String appName;
+    /**
+     * The application version to display is status response
+     */
+    @NotEmpty
+    private String version;
 }

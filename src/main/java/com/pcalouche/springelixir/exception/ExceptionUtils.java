@@ -1,13 +1,12 @@
 package com.pcalouche.springelixir.exception;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.ObjectError;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
@@ -15,32 +14,45 @@ import org.springframework.web.multipart.MultipartException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExceptionUtils {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    public static JsonNode buildJsonErrorObject(Exception e, HttpServletRequest request) {
-        ObjectNode errorObjectNode = ExceptionUtils.objectMapper.createObjectNode();
-        errorObjectNode.put("timestamp", System.currentTimeMillis());
+    public static JsonExceptionResponse buildJsonErrorResponse(Exception e, HttpServletRequest request) {
+        JsonExceptionResponse jsonExceptionResponse = new JsonExceptionResponse();
+        jsonExceptionResponse.setTimestamp(System.currentTimeMillis());
         if (request != null) {
-            errorObjectNode.put("path", request.getRequestURI());
+            jsonExceptionResponse.setPath(StringUtils.isNotBlank(request.getQueryString()) ?
+                    request.getRequestURI() + "?" + request.getQueryString()
+                    :
+                    request.getRequestURI());
         }
-        HttpStatus status = ExceptionUtils.getHttpStatusForException(e);
-        errorObjectNode.put("status", status.value());
-        errorObjectNode.put("error", status.getReasonPhrase());
-        errorObjectNode.put("exception", e.getClass().getName());
-        if (e instanceof MethodArgumentNotValidException) {
-            errorObjectNode.put("message", "See validation messages for more details.");
+        HttpStatus httpStatus = ExceptionUtils.getHttpStatusForException(e);
+        jsonExceptionResponse.setStatus(httpStatus.value());
+        jsonExceptionResponse.setError(httpStatus.getReasonPhrase());
+        jsonExceptionResponse.setException(e.getClass().getSimpleName());
+        if (e instanceof MethodArgumentNotValidException || e instanceof BindException) {
             // Make the message output more meaningful by providing a map of error codes and messages.
-            MethodArgumentNotValidException methodArgumentNotValidException = (MethodArgumentNotValidException) e;
-            List<ObjectError> objectErrors = methodArgumentNotValidException.getBindingResult().getAllErrors();
-            HashMap<String, String> errorMap = new HashMap<>();
-            objectErrors.forEach(objectError -> errorMap.put(objectError.getCode(), objectError.getDefaultMessage()));
-            errorObjectNode.set("validationMessages", objectMapper.valueToTree(errorMap));
+            Map<String, String> fieldErrorsMap = getFieldErrorsMap(e);
+            jsonExceptionResponse.setMessage("See validation messages for more details.");
+            jsonExceptionResponse.setValidationMessages(fieldErrorsMap);
         } else {
-            errorObjectNode.put("message", e.getMessage());
+            jsonExceptionResponse.setMessage(e.getMessage());
         }
-        return errorObjectNode;
+        return jsonExceptionResponse;
+    }
+
+    private static Map<String, String> getFieldErrorsMap(Exception e) {
+        Map<String, String> errorMap = new HashMap<>();
+        List<FieldError> fieldErrors;
+        if (e instanceof MethodArgumentNotValidException) {
+            MethodArgumentNotValidException methodArgumentNotValidException = (MethodArgumentNotValidException) e;
+            fieldErrors = methodArgumentNotValidException.getBindingResult().getFieldErrors();
+        } else {
+            BindException bindException = (BindException) e;
+            fieldErrors = bindException.getBindingResult().getFieldErrors();
+        }
+        fieldErrors.forEach(fieldError -> errorMap.put(fieldError.getField(), fieldError.getDefaultMessage()));
+        return errorMap;
     }
 
     public static HttpStatus getHttpStatusForException(Exception e) {
