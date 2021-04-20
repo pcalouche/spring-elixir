@@ -17,6 +17,6 @@ public class StatusControllerTest extends AbstractControllerTest {
         mockMvc.perform(get(ElixirEndpoints.STATUS))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("appName").value("Spring Elixir"))
-                .andExpect(jsonPath("version").value("1.0.0"));
+                .andExpect(jsonPath("version").value("1.4.0"));
     }
 }
