@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(StatusEndpointProperties.class)
 public class StatusEndpointAutoConfiguration {
 
-    @Bean
-    public StatusController statusController(StatusEndpointProperties statusEndpointProperties) {
-        return new StatusController(statusEndpointProperties);
-    }
+	@Bean
+	public StatusController statusController(StatusEndpointProperties statusEndpointProperties) {
+		return new StatusController(statusEndpointProperties);
+	}
+
 }

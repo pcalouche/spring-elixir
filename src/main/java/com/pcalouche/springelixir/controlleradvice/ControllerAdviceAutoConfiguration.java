@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ControllerAdviceProperties.class)
 public class ControllerAdviceAutoConfiguration {
 
-    @Bean
-    public StandardControllerAdvice controllerExceptionAdvice() {
-        return new StandardControllerAdvice();
-    }
+	@Bean
+	public StandardControllerAdvice controllerExceptionAdvice() {
+		return new StandardControllerAdvice();
+	}
+
 }

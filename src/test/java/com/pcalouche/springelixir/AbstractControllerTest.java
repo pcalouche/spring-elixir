@@ -15,14 +15,14 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @AutoConfigureJson
-@ContextConfiguration(classes = {
-        ControllerAdviceAutoConfiguration.class,
-        StatusEndpointAutoConfiguration.class
-})
+@ContextConfiguration(classes = { ControllerAdviceAutoConfiguration.class, StatusEndpointAutoConfiguration.class })
 @TestPropertySource("classpath:application-test.properties")
 public abstract class AbstractControllerTest {
-    @Autowired
-    protected MockMvc mockMvc;
-    @Autowired
-    protected ObjectMapper objectMapper;
+
+	@Autowired
+	protected MockMvc mockMvc;
+
+	@Autowired
+	protected ObjectMapper objectMapper;
+
 }

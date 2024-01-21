@@ -1,0 +1,3 @@
+com.pcalouche.springelixir.controlleradvice.ControllerAdviceAutoConfiguration
+#com.pcalouche.springelixir.springdoc.SpringDocAutoConfiguration
+com.pcalouche.springelixir.statusendpoint.StatusEndpointAutoConfiguration
