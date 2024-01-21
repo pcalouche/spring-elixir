@@ -1,5 +1,10 @@
 package com.pcalouche.springelixir.controllerAdvice;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.pcalouche.springelixir.AbstractControllerTest;
 import com.pcalouche.springelixir.exception.ExceptionUtils;
 import com.pcalouche.springelixir.exception.JsonExceptionResponse;
@@ -15,43 +20,43 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(value = StatusController.class)
 public class StandardControllerAdviceTest extends AbstractControllerTest {
-    @MockBean
-    private StatusController statusController;
 
-    @Test
-    public void testException() throws Exception {
-        long currentTimeInMillis = System.currentTimeMillis();
-        RuntimeException runtimeException = new RuntimeException("some random runtime exception");
+	@MockBean
+	private StatusController statusController;
 
-        MockHttpServletRequest request = MockMvcRequestBuilders.get(ElixirEndpoints.STATUS)
-                .contentType(MediaType.APPLICATION_JSON).buildRequest(new MockServletContext());
+	@Test
+	public void testException() throws Exception {
+		long currentTimeInMillis = System.currentTimeMillis();
+		RuntimeException runtimeException = new RuntimeException("some random runtime exception");
 
-        JsonExceptionResponse expectedJsonExceptionResponse = ExceptionUtils.buildJsonErrorResponse(runtimeException, request);
-        // Remove timestamp for easier comparison
-        expectedJsonExceptionResponse.setTimestamp(0);
+		MockHttpServletRequest request = MockMvcRequestBuilders.get(ElixirEndpoints.STATUS)
+			.contentType(MediaType.APPLICATION_JSON)
+			.buildRequest(new MockServletContext());
 
-        given(statusController.status()).willThrow(runtimeException);
+		JsonExceptionResponse expectedJsonExceptionResponse = ExceptionUtils.buildJsonErrorResponse(runtimeException,
+				request);
+		// Remove timestamp for easier comparison
+		expectedJsonExceptionResponse.setTimestamp(0);
 
-        MvcResult mvcResult = mockMvc.perform(get(ElixirEndpoints.STATUS))
-                .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                .andReturn();
+		given(statusController.status()).willThrow(runtimeException);
 
-        JsonExceptionResponse actualJsonExceptionResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), JsonExceptionResponse.class);
-        // Check timestamp is greater than current time
-        assertThat(actualJsonExceptionResponse.getTimestamp() >= currentTimeInMillis);
+		MvcResult mvcResult = mockMvc.perform(get(ElixirEndpoints.STATUS))
+			.andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+			.andReturn();
 
-        // Remove timestamp for easier comparison since it will be dynamic anyways
-        actualJsonExceptionResponse.setTimestamp(0);
+		JsonExceptionResponse actualJsonExceptionResponse = objectMapper
+			.readValue(mvcResult.getResponse().getContentAsString(), JsonExceptionResponse.class);
+		// Check timestamp is greater than current time
+		assertThat(actualJsonExceptionResponse.getTimestamp() >= currentTimeInMillis);
 
-        assertThat(actualJsonExceptionResponse).isEqualTo(expectedJsonExceptionResponse);
+		// Remove timestamp for easier comparison since it will be dynamic anyways
+		actualJsonExceptionResponse.setTimestamp(0);
 
-        assertThat(mvcResult.getResolvedException()).isInstanceOf(Exception.class);
-    }
+		assertThat(actualJsonExceptionResponse).isEqualTo(expectedJsonExceptionResponse);
+
+		assertThat(mvcResult.getResolvedException()).isInstanceOf(Exception.class);
+	}
+
 }
